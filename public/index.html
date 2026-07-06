@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Examon DPP Converter</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Examon Education</p>
+        <h1>DPP PDF Converter</h1>
+        <p class="sub">Upload raw DOCX/PDF/TXT, apply your fixed Examon template, auto-fit questions and solutions, and download final PDF.</p>
+      </div>
+      <img src="/assets/examon-logo.png" alt="Examon logo" />
+    </section>
+
+    <section class="panel">
+      <form id="dppForm" enctype="multipart/form-data">
+        <div class="grid two">
+          <label>Title
+            <input name="title" value="History" required />
+          </label>
+
+          <label>Subtitle / Topic
+            <input name="subtitle" value="Practice session" required />
+          </label>
+
+          <label>DPP Number
+            <input name="dppNumber" value="DPP 1" required />
+          </label>
+
+          <label>Subject Tag
+            <input name="subjectTag" value="History" required />
+          </label>
+
+          <label>Start Question Number
+            <input name="startQuestionNo" type="number" value="1" min="1" />
+          </label>
+
+          <label>Font Size
+            <select name="fontScale">
+              <option value="normal">Normal</option>
+              <option value="+2">Increase +2</option>
+              <option value="+4">Increase +4</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>Output Language
+            <select name="languageMode">
+              <option value="bilingual" selected>English + Hindi</option>
+              <option value="english">English Only</option>
+              <option value="hindi">Hindi Only</option>
+            </select>
+          </label>
+
+          <label>Layout Mode
+            <select name="layoutMode">
+              <option value="auto" selected>Auto detect space</option>
+              <option value="fixed">Fixed count per page</option>
+            </select>
+          </label>
+
+          <label>Questions Per Page, fixed mode only
+            <input name="questionsPerPage" type="number" value="5" min="1" max="12" />
+          </label>
+
+          <label>Solutions Per Page, fixed mode only
+            <input name="solutionsPerPage" type="number" value="8" min="1" max="12" />
+          </label>
+
+          <label class="check">
+            <input name="disableWatermark" type="checkbox" />
+            Disable watermark
+          </label>
+        </div>
+
+        <label>Upload Raw File, DOCX/PDF/TXT
+          <input name="rawFile" type="file" accept=".docx,.pdf,.txt,.html,.htm" />
+        </label>
+
+        <label>Or Paste Raw Text / JSON
+          <textarea name="rawText" rows="14" placeholder="Paste raw DPP text here. You can also paste structured JSON."></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="button" id="sampleBtn">Load Sample</button>
+          <button type="button" id="previewBtn">Check Detected Questions</button>
+          <button type="submit" class="primary">Generate PDF</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="result" class="result hidden"></section>
+  </main>
+
+<script>
+const form = document.getElementById('dppForm');
+const result = document.getElementById('result');
+
+function showResult(html, type = 'info') {
+  result.className = 'result ' + type;
+  result.innerHTML = html;
+}
+
+async function submitTo(endpoint) {
+  const fd = new FormData(form);
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    body: fd
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.error || 'Something went wrong.');
+  }
+
+  return data;
+}
+
+document.getElementById('sampleBtn').addEventListener('click', async () => {
+  try {
+    const text = await fetch('/sample-dpp.txt').then(r => r.text());
+    form.rawText.value = text;
+    showResult('Sample loaded. Now click <b>Generate PDF</b>.');
+  } catch (_) {
+    showResult('Sample file not found. Upload your DOCX instead.', 'error');
+  }
+});
+
+document.getElementById('previewBtn').addEventListener('click', async () => {
+  try {
+    showResult('Checking raw file/text...');
+
+    const data = await submitTo('/api/preview-data');
+
+    const firstQuestion = data.data.questions[0] || {};
+
+    showResult(
+      '<b>' + data.questionCount + '</b> questions detected.' +
+      '<br><br><b>First question preview:</b>' +
+      '<pre>' + JSON.stringify(firstQuestion, null, 2) + '</pre>',
+      'success'
+    );
+  } catch (err) {
+    showResult(err.message, 'error');
+  }
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  try {
+    showResult('Generating PDF from Examon DPP template...');
+
+    const data = await submitTo('/api/generate');
+
+    showResult(
+      '<b>PDF ready.</b>' +
+      '<br>Questions detected: ' + data.questionCount +
+      '<br><br>' +
+      '<a class="download" href="' + data.pdfUrl + '" target="_blank">Open / Download Final PDF</a> ' +
+      '<a class="download secondary" href="' + data.htmlUrl + '" target="_blank">Open HTML Preview</a>',
+      'success'
+    );
+  } catch (err) {
+    showResult(err.message, 'error');
+  }
+});
+</script>
+</body>
+</html>

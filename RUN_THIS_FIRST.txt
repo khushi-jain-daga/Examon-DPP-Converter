@@ -1,0 +1,13 @@
+Examon DPP Converter SAFE Option Fix v4.1
+
+This fixes the missing npm run desktop script.
+
+Run:
+  npm install
+  npm run desktop
+
+Browser mode:
+  npm start
+  open http://127.0.0.1:3210
+
+This version changes only parser/package metadata. It restores original working render files.

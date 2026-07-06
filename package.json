@@ -1,0 +1,50 @@
+{
+  "name": "examon-dpp-converter",
+  "version": "1.0.1-safe-option-fix-v4-1",
+  "description": "Examon Education DPP PDF Converter - Safe Option Parser Fix",
+  "main": "main.js",
+  "author": "Examon Education",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node server.js",
+    "desktop": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win portable --x64"
+  },
+  "dependencies": {
+    "express": "latest",
+    "multer": "latest",
+    "mammoth": "latest",
+    "pdf-parse": "1.1.1",
+    "playwright": "latest"
+  },
+  "devDependencies": {
+    "electron": "29.4.6",
+    "electron-builder": "24.13.3"
+  },
+  "build": {
+    "appId": "in.examon.dppconverter",
+    "productName": "Examon DPP Converter",
+    "copyright": "Copyright © Examon Education",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "server.js",
+      "src/**/*",
+      "public/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "executableName": "Examon DPP Converter"
+    },
+    "portable": {
+      "artifactName": "Examon-DPP-Converter.exe"
+    }
+  }
+}

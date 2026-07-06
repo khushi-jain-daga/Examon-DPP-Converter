@@ -1,0 +1,39 @@
+Q1. A block of mass 30 kg rests on a horizontal rough surface. If the coefficient of static friction is 0.42, what is the least horizontal force required to just start the motion? Take g = 10 m/s^2.
+30 kg द्रव्यमान का एक ब्लॉक क्षैतिज खुरदरी सतह पर रखा है। यदि स्थैतिक घर्षण गुणांक 0.42 है, तो गति प्रारंभ कराने के लिए न्यूनतम क्षैतिज बल कितना होगा? g = 10 m/s^2 लें।
+A) 96 N / 96 N
+B) 126 N / 126 N
+C) 168 N / 168 N
+D) 300 N / 300 N
+Answer: B
+Solution: For impending motion on a horizontal surface, limiting static friction Fmax = mu_s N = mu_s mg = 0.42 × 30 × 10 = 126 N. Therefore the least applied force is 126 N.
+क्षैतिज सतह पर गति प्रारंभ होने की अवस्था में सीमांत स्थैतिक घर्षण Fmax = mu_s N = mu_s mg = 0.42 × 30 × 10 = 126 N होगा। अतः न्यूनतम लगाया गया बल 126 N है।
+
+Q2. A 20 kg block is at rest on a horizontal floor. mu_s = 0.50 and a horizontal force of 60 N is applied. What is the friction force acting on the block? Take g = 10 m/s^2.
+20 kg का ब्लॉक क्षैतिज फर्श पर विराम में है। mu_s = 0.50 है और 60 N का क्षैतिज बल लगाया गया है। ब्लॉक पर लगने वाला घर्षण बल कितना होगा? g = 10 m/s^2 लें।
+A) 60 N opposite to applied force / लगाए गए बल के विपरीत 60 N
+B) 100 N opposite to applied force / लगाए गए बल के विपरीत 100 N
+C) 40 N in the direction of applied force / लगाए गए बल की दिशा में 40 N
+D) Zero / शून्य
+Answer: A
+Solution: Maximum static friction = mu_s N = 0.5 × 20 × 10 = 100 N. Since the applied force 60 N is less than 100 N, static friction self-adjusts to 60 N opposite to the applied force.
+अधिकतम स्थैतिक घर्षण = mu_s N = 0.5 × 20 × 10 = 100 N है। लगाया गया 60 N बल 100 N से कम है, इसलिए स्थैतिक घर्षण स्वयं 60 N होकर लगाए गए बल के विपरीत कार्य करेगा।
+
+Q3. For a block on a rough inclined plane, the coefficient of static friction is 0.577. What is the angle of repose?
+खुरदरे नत तल पर रखे ब्लॉक के लिए स्थैतिक घर्षण गुणांक 0.577 है। विश्राम कोण कितना होगा?
+A) 20° / 20°
+B) 30° / 30°
+C) 45° / 45°
+D) 60° / 60°
+Answer: B
+Solution: At angle of repose, tan theta = mu_s. Hence theta = tan^-1(0.577) approx 30°. The block is just about to slide at this angle.
+विश्राम कोण पर tan theta = mu_s होता है। अतः theta = tan^-1(0.577) approx 30°। इस कोण पर ब्लॉक बस फिसलना प्रारंभ करने वाला होता है।
+
+Q4. A 10 kg block slides down a 37° rough inclined plane. If mu_k = 0.25, sin 37° = 0.6 and cos 37° = 0.8, find the acceleration of the block. Take g = 10 m/s^2.
+10 kg का ब्लॉक 37° के खुरदरे नत तल पर नीचे की ओर फिसलता है। यदि mu_k = 0.25, sin 37° = 0.6 और cos 37° = 0.8 है, तो ब्लॉक का त्वरण ज्ञात कीजिए। g = 10 m/s^2 लें।
+A) 2 m/s^2 / 2 m/s^2
+B) 3 m/s^2 / 3 m/s^2
+C) 4 m/s^2 / 4 m/s^2
+D) 6 m/s^2 / 6 m/s^2
+Answer: C
+Solution: Down-slope component = mg sin theta and kinetic friction = mu_k mg cos theta. Thus a = g(sin theta - mu_k cos theta) = 10(0.6 - 0.25 × 0.8) = 4 m/s^2.
+ढाल के अनुदिश घटक mg sin theta तथा गतिज घर्षण mu_k mg cos theta है। अतः a = g(sin theta - mu_k cos theta) = 10(0.6 - 0.25 × 0.8) = 4 m/s^2।
