@@ -1,0 +1,18 @@
+EXAMON DPP CONVERTER — HINDI ANSWER DUPLICATION FIX
+
+This patch contains only the corrected file:
+  src\template.js
+
+HOW TO APPLY
+1. Stop the converter in PowerShell using Ctrl + C.
+2. Open your existing converter project folder.
+3. Extract this ZIP directly inside that project folder.
+4. When Windows asks, choose "Replace the file in the destination".
+5. Start the converter again using:
+     npm start
+6. Generate the PDF again. Previously generated PDFs will not change automatically.
+
+FIX INCLUDED
+- English answer line now shows only the English option text.
+- Hindi answer line now shows only the Hindi option text.
+- Numerical or language-neutral options continue to appear correctly on both answer lines.

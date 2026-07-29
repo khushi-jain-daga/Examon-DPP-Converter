@@ -1,4 +1,9 @@
 
 node_modules/
 dist/
-*.exe
+*.exerelease/
+*.log
+.env
+.env.*
+!.env.example
+src/template.js.backup-*

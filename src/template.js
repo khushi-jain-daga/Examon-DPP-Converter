@@ -501,10 +501,52 @@ function questionCard(q) {
   return article;
 }
 
+function splitOptionLanguages(value) {
+  const raw = String(value || '').replace(/\\r/g, '').trim();
+
+  if (!raw) {
+    return { english: '', hindi: '' };
+  }
+
+  const english = [];
+  const hindi = [];
+
+  raw.split(/\\n+/).map(line => line.trim()).filter(Boolean).forEach(line => {
+    const hindiStart = line.search(/[\u0900-\u097F]/);
+
+    if (hindiStart === -1) {
+      english.push(line);
+      return;
+    }
+
+    const englishPart = line.slice(0, hindiStart).trim();
+    const hindiPart = line.slice(hindiStart).trim();
+
+    if (englishPart) english.push(englishPart);
+    if (hindiPart) hindi.push(hindiPart);
+  });
+
+  const unique = items => [...new Set(items.map(item => item.trim()).filter(Boolean))].join(' ').trim();
+
+  return {
+    english: unique(english),
+    hindi: unique(hindi)
+  };
+}
+
 function correctOptionText(q) {
   const answer = String(q.answer || '').trim().charAt(0).toUpperCase();
   const option = q.options && q.options[answer] ? q.options[answer] : '';
-  return answer ? answer + ') ' + option : '';
+  const parts = splitOptionLanguages(option);
+
+  if (!answer) {
+    return { english: '', hindi: '' };
+  }
+
+  return {
+    english: answer + (parts.english ? ') ' + parts.english : ''),
+    hindi: answer + (parts.hindi ? ') ' + parts.hindi : (parts.english ? ') ' + parts.english : ''))
+  };
 }
 
 function solutionCard(q) {
@@ -522,11 +564,13 @@ function solutionCard(q) {
 
   const correct = correctOptionText(q);
   const answer = String(q.answer || '').trim().charAt(0).toUpperCase();
+  const englishAnswer = correct.english || answer;
+  const hindiAnswer = correct.hindi || englishAnswer;
 
   article.innerHTML =
-    '<div class="sol-title">Q' + html(q.qno) + '. Correct Answer: ' + html(correct || answer) + '</div>' +
-    (isBilingual && correct
-      ? '<div class="sol-hi">सही उत्तर: ' + html(correct || answer) + '</div>'
+    '<div class="sol-title">Q' + html(q.qno) + '. Correct Answer: ' + html(englishAnswer) + '</div>' +
+    (isBilingual && hindiAnswer
+      ? '<div class="sol-hi">सही उत्तर: ' + html(hindiAnswer) + '</div>'
       : '') +
     '<div>' +
       (isBilingual ? '<span class="sol-label">English:</span> ' : '') +
