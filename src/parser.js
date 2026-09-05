@@ -291,6 +291,60 @@ function parseOptionsFromLines(lines, start, end, languageMode) {
   };
 }
 
+function explicitSolutionSeparator(line) {
+  const cleaned = cleanLine(line);
+
+  if (cleaned === '/') {
+    return {
+      found: true,
+      before: '',
+      after: ''
+    };
+  }
+
+  // Only a spaced slash is a bilingual separator. This deliberately leaves
+  // formulas/units such as 1/2, m/s and N/mm² untouched.
+  const match = cleaned.match(/^(.*?)\s+\/\s+(.*)$/);
+
+  if (!match) {
+    return {
+      found: false,
+      before: cleaned,
+      after: ''
+    };
+  }
+
+  return {
+    found: true,
+    before: cleanLine(match[1] || ''),
+    after: cleanLine(match[2] || '')
+  };
+}
+
+function formatSolutionResult(english, hindi, languageMode) {
+  const englishText = uniqueLines(english).join(' ').replace(/\s{2,}/g, ' ').trim();
+  const hindiText = uniqueLines(hindi).join(' ').replace(/\s{2,}/g, ' ').trim();
+
+  if (languageMode === 'english') {
+    return {
+      english: englishText,
+      hindi: ''
+    };
+  }
+
+  if (languageMode === 'hindi') {
+    return {
+      english: '',
+      hindi: hindiText
+    };
+  }
+
+  return {
+    english: englishText,
+    hindi: hindiText
+  };
+}
+
 function parseSolutionLines(lines, languageMode) {
   const solStart = solutionStartIndex(lines);
 
@@ -301,6 +355,60 @@ function parseSolutionLines(lines, languageMode) {
     };
   }
 
+  // New raw-PPT convention: a standalone slash, or a slash with spaces on
+  // both sides, explicitly separates English and Hindi solution text.
+  // When present, position around the slash takes priority over script
+  // detection: before / = English, after / = Hindi.
+  const hasExplicitSeparator = lines.slice(solStart).some(rawLine => {
+    const cleaned = cleanLine(rawLine);
+    if (!cleaned || isAnswerLine(cleaned)) return false;
+
+    const withoutPrefix = removeKnownPrefix(cleaned);
+    return explicitSolutionSeparator(withoutPrefix).found;
+  });
+
+  if (hasExplicitSeparator) {
+    const english = [];
+    const hindi = [];
+    let current = 'english';
+
+    for (let i = solStart; i < lines.length; i++) {
+      let line = cleanLine(lines[i]);
+      if (!line || isAnswerLine(line)) continue;
+
+      if (/^(Solution\s+in\s+English|Solution|Sol\.|Explanation|Detailed Solution)\s*[:\-]?/i.test(line)) {
+        line = removeKnownPrefix(line);
+      } else if (/^(समाधान\s*हिंदी\s*में|समाधान|व्याख्या)\s*[:：\-]?/i.test(line)) {
+        line = removeKnownPrefix(line);
+      }
+
+      if (!line) continue;
+
+      const separator = explicitSolutionSeparator(line);
+
+      if (separator.found) {
+        if (separator.before) {
+          if (current === 'english') english.push(separator.before);
+          else hindi.push(separator.before);
+        }
+
+        current = 'hindi';
+
+        if (separator.after) {
+          hindi.push(separator.after);
+        }
+
+        continue;
+      }
+
+      if (current === 'english') english.push(line);
+      else hindi.push(line);
+    }
+
+    return formatSolutionResult(english, hindi, languageMode);
+  }
+
+  // Backward-compatible behavior for older PPTs that do not use '/'.
   const english = [];
   const hindi = [];
   let current = null;
@@ -339,24 +447,7 @@ function parseSolutionLines(lines, languageMode) {
     }
   }
 
-  if (languageMode === 'english') {
-    return {
-      english: uniqueLines(english).join(' ').replace(/\s{2,}/g, ' ').trim(),
-      hindi: ''
-    };
-  }
-
-  if (languageMode === 'hindi') {
-    return {
-      english: '',
-      hindi: uniqueLines(hindi).join(' ').replace(/\s{2,}/g, ' ').trim()
-    };
-  }
-
-  return {
-    english: uniqueLines(english).join(' ').replace(/\s{2,}/g, ' ').trim(),
-    hindi: uniqueLines(hindi).join(' ').replace(/\s{2,}/g, ' ').trim()
-  };
+  return formatSolutionResult(english, hindi, languageMode);
 }
 
 function parseBlock(block, fallbackNo, languageMode) {
