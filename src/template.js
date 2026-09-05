@@ -510,17 +510,19 @@ function splitOptionLanguages(value) {
 
   const english = [];
   const hindi = [];
+  const cleanAnswerSeparator = text => String(text || '').replace(/\\s*\\/\\s*$/, '').trim();
 
   raw.split(/\\n+/).map(line => line.trim()).filter(Boolean).forEach(line => {
     const hindiStart = line.search(/[\u0900-\u097F]/);
 
     if (hindiStart === -1) {
-      english.push(line);
+      const cleanedLine = cleanAnswerSeparator(line);
+      if (cleanedLine) english.push(cleanedLine);
       return;
     }
 
-    const englishPart = line.slice(0, hindiStart).trim();
-    const hindiPart = line.slice(hindiStart).trim();
+    const englishPart = cleanAnswerSeparator(line.slice(0, hindiStart));
+    const hindiPart = cleanAnswerSeparator(line.slice(hindiStart));
 
     if (englishPart) english.push(englishPart);
     if (hindiPart) hindi.push(hindiPart);
